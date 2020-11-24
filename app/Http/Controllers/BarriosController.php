@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use App\Barrio;
 class BarriosController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth');
+	}
+	
     public function index(){
     	$barrios = Barrio::all();
     	return view('barrios.index',['barrios' => $barrios]);
@@ -26,7 +31,7 @@ class BarriosController extends Controller
     	$barrio->save();
 
     	return redirect()->route('barrios.index')
-                         ->with(['message' => 'El Barrio "'.$barrio->nombre.'" fue cargado correctamente', 'status' => 'success']);
+                         ->with(['message' => 'El Barrio "'.$barrio->nombre.'" fue cargado correctamente!!', 'status' => 'success']);
     }
 
     public function update(Request $request){
@@ -46,7 +51,7 @@ class BarriosController extends Controller
     	$barrio->update();
 
     	return redirect()->route('barrios.index')
-                         ->with(['message' => 'El Barrio "'.$barrio->nombre.'" fue actualizado correctamente', 'status' => 'success']);
+                         ->with(['message' => 'El Barrio "'.$barrio->nombre.'" fue actualizado correctamente...', 'status' => 'success']);
     }
 
     public function destroy(Request $request){

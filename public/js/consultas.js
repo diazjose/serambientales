@@ -31,8 +31,8 @@ window.addEventListener("load", function(){
 
 	$("#fechaTarea").click(function(){
 		var fecha = $("#fecha").val();		
-		var	id = $("#puestId").val();
-		var url = 'http://localhost/SISCOE/public/puesto/ver/'+id+'/'+fecha;
+		var	id = $("#personal_id").val();
+		var url = 'http://localhost/serambientales/public/personal/asistencia/'+id+'/'+fecha;
 		$(location).attr('href',url);
 	});
 
@@ -58,12 +58,10 @@ function tarea(id,apellidos,nombre){
 	$("#Title").html('');
 	$("#boton").text('');
 	$("#persona_id").val('');
-	$('#lugar').val('');
-	$("#horaEntrada").val('');
-	$("#horaSalida").val('');	
+	$('#lugar').val('');	
 	$('#tarea').val("");
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/SISCOE/public/personal/asignarTarea');
+	$("#formTarea").attr("action",'http://localhost/serambientales/public/tarea/asignarTarea');
 	$("#Title").append('Agregar Tarea');
 	$("#persona_id").val(id);
 	$("#nombre").html('');
@@ -74,23 +72,19 @@ function tarea(id,apellidos,nombre){
 	
 }
 
-function editTarea(idTarea,id,apellidos, nombre, lugar, horaE, horaS, tarea){
+function editTarea(idTarea,id,apellidos, nombre, lugar, tarea){
 	console.log(idTarea);
 	$("#Title").html('');
 	$("#boton").text('');
 	$("#persona_id").val('');
-	$("#horaEntrada").val('');
-	$("#horaSalida").val('');	
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/SISCOE/public/personal/editarTarea');
+	$("#formTarea").attr("action",'http://localhost/serambientales/public/tarea/editarTarea');
 	$("#Title").append('Actualizar Tarea');
 	$("#nombre").html('');
 	$("#tarea_id").val(idTarea);
 	$("#nombre").append(apellidos+' '+nombre);
 	$("#persona_id").val(id);
-	$('#lugar option[value="'+ lugar +'"]').attr("selected",true);
-	$("#horaEntrada").val(horaE);
-	$("#horaSalida").val(horaS);	
+	$('#lugar option[value="'+ lugar +'"]').attr("selected",true);	
 	$('#tarea option[value="'+ tarea +'"]').attr("selected",true);
 	$("#boton").text('Actualizar Tarea');
 	$("#boton").removeClass('btn-primary');
@@ -102,6 +96,14 @@ function eliminarTarea(id,nombre){
 	$("#nombreTarea").text(nombre);
 	$("#tareaName").val(nombre);
 	$("#deleteTarea").val(id);
+}
+
+function asistencia(idTarea,a,n,status,obs){
+	$("#idTarea").val(idTarea);
+    $("#nameTarea").val(a+', '+n);
+	$("#name").append(a+', '+n);
+	$('#asis option[value="'+ status +'"]').attr("selected",true);
+	$("#obs").val(obs);
 }
       
                

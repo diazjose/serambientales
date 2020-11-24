@@ -51,63 +51,51 @@
 
             <div class="row">
                 <div class="col-md-8">
-                    <h3 class="title my-3">Asistencia del Personal - <!--{{date('d/m/Y', strtotime($fecha))}} <!--{{date('H:i')}} --></h3>
+                    <h3 class="title my-3">Tareas Realizadas</h3>
                 </div>
                 <div class="col-md-4 my-3"> 
-                    <form class="form-inline" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <input type="date" class="form-control" id="fecha" name="fecha">
-                        </div>
-                        <div class="form-group">
-                            <a href="#" id="fechaTarea" class="mx-md-2 btn btn-primary btn-md-block"><strong><i class="fas fa-search"></i> Buscar por Fecha</strong></a>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <a href="#" onclick="tarea()" data-toggle="modal" data-target="#tareaModal" class="btn btn-outline-dark title"  title="Asignar Tarea" ><img src="{{asset('images/trabajo1.png')}}" width="23" alt=""> Nueva Tarea</a>
+                    </div>
                 </div>
             </div>    
-<!---
+
             <hr class="border-red">
-            @if(count($personas)>0)
+            @if(count($lugar->tareas) > 0)
                 <div class="table-responsive my-5 justify-content-center" id="resultado">
                     <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Hora Entrada</th>
-                                <th>Hora Salida</th>
-                                <th>Asistencia</th>
-                                <th>Depende</th>
+                                <th>Tarea</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php($i = 1)
-                            @foreach($personas as $per)
+                            @foreach($lugar->tareas as $tarea)
                             <tr>
                                 <td>{{$i}}</td>
-                                <td>{{$per->persona->apellidos}} {{$per->persona->nombre}}</td>
-                                <td>{{$per->persona->telefono}}</td>
-                                <td>{{date('H:i', strtotime($per->horaEntrada))}}</td>
-                                <td>{{date('H:i', strtotime($per->horaSalida))}}</td>
+                                <td>{{$tarea->tarea}}</td>
+                                <td>{{date('d/m/Y', strtotime($tarea->fechaInicio))}}</td>
                                 <td>
-                                    @if($per->estado == '')
-                                    ...    
-                                    @else
-                                    {{$per->estado}}
+                                    @if($tarea->fechaFin != NULL)
+                                    {{date('d/m/Y', strtotime($tarea->fechaFin))}}
                                     @endif
                                 </td>
-                                @if(count($per->persona->depende) > 0)
-                                    @foreach($per->persona->depende as $dep)                                    
-                                        @if($dep->persona_id == $per->persona_id)
-                                        <td>{{$dep->coordinador->apellidos}} {{$dep->coordinador->nombre}}</td>
-                                        @endif
-                                    @endforeach                            
-                                @else
-                                <td>NADIE</td>
-                                @endif
-                                <td></td>
+                                <td>
+                                    @if($tarea->estado == 'Activo')
+                                    <h4><span class="badge badge-pill badge-primary">{{$tarea->estado}}</span></h4>
+                                    @else
+                                    <h4><span class="badge badge-pill badge-success">{{$tarea->estado}}</span></h4>
+                                    @endif
+                                </td>
+                                <td>
+                                <a href="#" onclick="editTarea({{$tarea->id}},'{{$tarea->tarea}}','{{$tarea->fechaInicio}}','{{$tarea->fechaFin}}','{{$tarea->estado}}')" data-toggle="modal" data-target="#tareaModal" class="btn btn-outline-success title"  title="Asignar Tarea" ><i class="fas fa-edit"></i></a>
+                                </td>
                             </tr>
                             @php($i++)
                             @endforeach
@@ -116,16 +104,63 @@
                 </div>
             @else
             <div class="text-center my-5">
-                <h4 class="text-danger my-5"><strong>NO SE REGISTRO NINGUN PERSONAL...</strong></h4>
+                <h4 class="text-danger my-5"><strong>NO SE REGISTRO NINGUN TAREA...</strong></h4>
             </div>    
             @endif
         </div>
-    -->
     </div>    
 </div>
 
-
+<!-- Modal -->
+<div class="modal fade" id="tareaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-rojo">
+        <h4 class="modal-title title text-white" id="Title"></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body bg-camel">
+            <form method="POST" action="" id="formTarea">
+                @csrf
+                <input type="hidden" name="idTarea" id="idTarea">
+                <input type="hidden" name="lugar_id" value="{{$lugar->id}}">
+                <div class="form-group">
+                    <label for="tarea" class="title">Tarea Asignada</label>
+                    <select class="custom-select" id="tarea" name="tarea" required>
+                        <option selected disabled value="">-- Elegir Tarea --</option>
+                        <option value="Desmalezamiento">Desmalezamiento</option>
+                        <option value="Descacharreo">Descacharreo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fechaInicio" class="title">Fecha Inicio</label>
+                    <input type="date" name="fechaInicio" id="fechaInicio" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="fechaFin" class="title">Fecha Finalizacion</label>
+                    <input type="date" name="fechaFin" id="fechaFin" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="asis" class="title">Estado</label>
+                    <select class="custom-select" id="estado" name="estado" required>
+                        <option selected disabled value="">-- Elegir Opción --</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Terminado">Terminado</option>
+                    </select>
+                </div>      
+                
+                <hr>
+                <div class="form-group mx-2">
+                    <button type="submit" class="btn btn-primary title" id="boton"></button>
+                </div>
+            </form>        
+      </div>      
+    </div>
+  </div>
+</div>
 @endsection
 @section('script')
-    <script src="{{ asset('js/consultas.js') }}"></script>
+    <script src="{{ asset('js/lugarTarea.js') }}"></script>
 @endsection

@@ -11,10 +11,10 @@ class Trabajo extends Model
     protected $fillable = [
         'persona_id', 'lugar_id', 'fecha', 'horaEntrada', 'horaSalida', 'tarea',
     ];
-    /*    
+        
     public function lugar(){
         return $this->belongsTo('App\Lugar', 'lugar_id'); 
-    }*/
+    }
 
     public function persona(){
         return $this->belongsTo('App\Persona', 'persona_id'); 

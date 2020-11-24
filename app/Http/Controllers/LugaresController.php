@@ -9,6 +9,11 @@ use Mapper;
 
 class LugaresController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index(){
     	$barrios = Barrio::all();
     	$lugares = Lugar::all();

@@ -92,12 +92,12 @@
                 </div>
             </nav>
 
-            <main class="py-4 px-2 row">
+            <main class="py-4 row">
                 @include('layouts.menu')
                 @yield('content')
             </main>            
         </div>
-        <script src="{{ asset('js/menu.js') }}"></script>
+        
         @yield('script')
     </body>
 </html>

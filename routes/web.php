@@ -29,10 +29,7 @@ Route::get('/personal/ver/{id}', 'PersonalController@viewAuth')->name('personal.
 Route::get('/personal/actualizar/{id}', 'PersonalController@edit')->name('personal.edit');
 Route::post('/personal/update', 'PersonalController@update')->name('personal.update');
 Route::post('/personal/delete', 'PersonalController@destroy')->name('personal.destroy');
-Route::post('/personal/asignarTarea', 'PersonalController@asignarTarea')->name('personal.asignarTarea');
-Route::post('/personal/editarTarea', 'PersonalController@editTarea')->name('personal.editTarea');
-Route::post('/personal/eliminarTarea', 'PersonalController@destroyTarea')->name('personal.destroyTarea');
-Route::get('/personal/asistencia/{id}', 'PersonalController@asistencia')->name('personal.asistencia');
+Route::get('/personal/asistencia/{id}/{fecha?}', 'PersonalController@asistencia')->name('personal.asistencia');
 
 
 /*BARRIOS*/
@@ -48,3 +45,15 @@ Route::post('/lugar/create', 'LugaresController@create')->name('lugar.create');
 Route::get('/lugar/ver/{id}', 'LugaresController@view')->name('lugar.view');
 Route::get('/lugar/actualizar/{id}', 'LugaresController@edit')->name('lugar.edit');
 Route::post('/lugar/update', 'LugaresController@update')->name('lugar.update');
+
+
+/*TAREAS*/
+Route::post('/tarea/asignarTarea', 'TrabajosController@create')->name('tarea.create');
+Route::post('/tarea/editarTarea', 'TrabajosController@update')->name('tarea.update');
+Route::post('/tarea/deleteTarea', 'TrabajosController@destroy')->name('tarea.destroy');
+Route::post('/tarea/asistTarea', 'TrabajosController@assistance')->name('tarea.assistance');
+
+
+/*DESIGNAR TAREA LUGAR*/
+Route::post('/designarLugar/crear', 'DesignarLugarController@create')->name('deslug.create');
+Route::post('/designarLugar/editar', 'DesignarLugarController@update')->name('deslug.update');

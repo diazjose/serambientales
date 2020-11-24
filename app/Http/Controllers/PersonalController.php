@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Persona;
 use App\Dependiente;
 use App\Trabajo;
-
+use App\Lugar;
 
 class PersonalController extends Controller
 {
@@ -147,60 +147,10 @@ class PersonalController extends Controller
     public function viewAuth($id){
         $auth = Persona::where('id',$id)->first();
         $personas = Dependiente::where('coordinador_id',$id)->get();
-        //$lugares = Puesto::where('estado', 1)->get();
-        return view('personal.viewAuth', ['auth' => $auth, 'dependiente' => $personas]);
-    }
-    public function asignarTarea(Request $request){
-        $validate = $this->validate($request, [
-                'persona_id' => ['required', 'integer', 'max:255'],
-                'lugar' => ['required', 'integer', 'max:255'],
-                'horaEntrada' => ['required', 'string', 'max:255'],
-                'horaEntrada' => ['required', 'string', 'max:255'],
-                'tarea' => ['required', 'string', 'max:255'],
-            ],
-            [
-                'denominacion.unique' => 'Esta denominacion ya esta registrada',
-                'direccion.unique' => 'Esta direccion ya esta registrada',
-            ]);
-
-        $tarea = new Trabajo();
-
-        $tarea->persona_id = $request->input('persona_id');
-        $tarea->puesto_id = $request->input('lugar');
-        $tarea->fecha = date('Y-m-d');
-        $tarea->persona_id = $request->input('persona_id');
-        $tarea->horaEntrada = $request->input('horaEntrada');
-        $tarea->horaSalida = $request->input('horaSalida');
-        $tarea->tarea = $request->input('tarea');
-
-        $tarea->save();
-
-        return redirect()->route('personal.viewAuth', [$request->input('id')])
-                         ->with(['message' => 'Tarea asignada correctamente', 'status' => 'success']);   
-    }
-
-    public function editTarea(Request $request){
-
-        $validate = $this->validate($request, [
-                'persona_id' => ['required', 'integer', 'max:255'],
-                'lugar' => ['required', 'integer', 'max:255'],
-                'horaEntrada' => ['required', 'string', 'max:255'],
-                'horaEntrada' => ['required', 'string', 'max:255'],
-                'tarea' => ['required', 'string', 'max:255'],
-            ]);
-
-        $tarea = Trabajo::find($request->input('idTarea'));
-        
-        $tarea->puesto_id = $request->input('lugar');
-        $tarea->horaEntrada = $request->input('horaEntrada');
-        $tarea->horaSalida = $request->input('horaSalida');
-        $tarea->tarea = $request->input('tarea');
-
-        $tarea->update();
-
-        return redirect()->route('personal.viewAuth', [$request->input('id')])
-                         ->with(['message' => 'Tarea actualizada correctamente', 'status' => 'success']);   
-    }
+        $fecha = date('d/m/d');
+        $lugares = Lugar::all();
+        return view('personal.viewAuth', ['auth' => $auth, 'dependiente' => $personas, 'lugares' => $lugares]);
+    }    
 
     public function destroy(Request $request){
         
@@ -213,30 +163,22 @@ class PersonalController extends Controller
         return redirect()->route('personal.index')
                          ->with(['message' => 'Se ha eliminado a '.$name, 'status' => 'danger']);
 
-    }
+    }    
 
-    public function destroyTarea(Request $request){
+    public function asistencia($id, $d=""){
         
-        $u = $request->input('id');
-        $id = $request->input('idTarea');
-        $name = $request->input('name');
-        $trabajo = Trabajo::find($id);
-        $trabajo->delete();
-
-        return redirect()->route('personal.viewAuth', [$u])
-                         ->with(['message' => 'Se ha eliminado la tarea  de '.$name, 'status' => 'danger']);
-
-    }
-
-    public function asistencia($id){
         $fecha = date('Y-m-01');
+        if($d!=""){
+            $fecha = date("Y-m-d",strtotime($d));
+        }
         $fechaNueva = date("Y-m-d",strtotime($fecha."+ 1 month"));
         $persona = Persona::find($id);
         $asistencias = Trabajo::where('persona_id',$id)
                                 ->where('fecha','>=', $fecha)
                                 ->where('fecha','<', $fechaNueva)
                                 ->get();
-        return view('personal.asistencia',['asistencias' => $asistencias, 'auth' => $persona]);
+                                $mes = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][date("n",strtotime($fecha)) - 1];
+        return view('personal.asistencia',['asistencias' => $asistencias, 'auth' => $persona, 'mes' => $mes]);
     }
 }
 
@@ -327,6 +269,31 @@ updated_at datetime,
 CONSTRAINT pk_trabajo PRIMARY KEY(id),
 CONSTRAINT fk_trabajo_persona FOREIGN KEY(persona_id) REFERENCES personas(id),
 CONSTRAINT fk_trabajo_puesto FOREIGN KEY(lugar_id) REFERENCES lugares(id)
+)ENGINE=InnoDB;
+
+create table designar_lugar(
+id int(255) auto_increment not null,
+lugar_id int(255),
+fechaInicio date,
+fechaFin date,
+tarea varchar(255),
+estado varchar(100),
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_designar_lugar PRIMARY KEY(id),
+CONSTRAINT fk_designar_lugar_lugar FOREIGN KEY(lugar_id) REFERENCES lugares(id)
+)ENGINE=InnoDB;
+
+create table denuncias(
+id int(255) auto_increment not null,
+designarLugar_id int(255),
+denunciante varchar(255),
+estado varchar(100),
+fecha date,
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_denuncias PRIMARY KEY(id),
+CONSTRAINT fk_denuncias_designarLugar FOREIGN KEY(designarLugar_id) REFERENCES designar_lugar(id)
 )ENGINE=InnoDB;
 
 */

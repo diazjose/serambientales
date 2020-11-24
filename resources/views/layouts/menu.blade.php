@@ -1,4 +1,4 @@
-<div class="left">
+<div class="left p-2">
 	<div class="item">
         <i class="fas fa-fw fa-bars"></i>
     </div>

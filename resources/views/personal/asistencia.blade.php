@@ -57,10 +57,20 @@
         <hr>
         <div class="card">
             <div class="card-header bg-rojo text-white title">
-                <h3>Datos del Personal a cargo</h3>
+                <h3>Asistencia del Mes de {{$mes}}</h3>
             </div>
             <div class="card-body">
-                
+                <div class="col my-3"> 
+                    <form class="form-inline">
+                        <input type="hidden" id="personal_id" value="{{$auth->id}}">
+                        <div class="form-group">
+                            <input type="month" class="form-control" id="fecha" name="fecha">
+                        </div>
+                        <div class="form-group">
+                            <a href="#" id="fechaTarea" class="mx-md-2 btn btn-primary btn-md-block"><strong><i class="fas fa-search"></i> Buscar Fecha</strong></a>
+                        </div>
+                    </form>
+                </div>
                 @if(count($asistencias)>0)
                 <div class="table-responsive my-5 justify-content-center" id="resultado">
                         <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
@@ -68,8 +78,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Fecha</th>
-                                    <th>Hora Entrada</th>
-                                    <th>Hora Salida</th>
+                                    <th>Lugar de trabajo</th>
                                     <th>Tarea</th>
                                     <th>Asistencia</th>
                                     <th>Observación</th>
@@ -81,10 +90,17 @@
                                 <tr>
                                     <td>{{$i}}</td>
                                     <td>{{date('d/m/Y', strtotime($as->fecha))}}</td>
-                                    <td>{{date('H:i', strtotime($as->horaEntrada))}}</td>
-                                    <td>{{date('H:i', strtotime($as->horaSalida))}}</td>
+                                    <td>{{$as->lugar->calle}} N° {{$as->lugar->numero}} - B° {{$as->lugar->barrio->nombre}} ({{$as->lugar->barrio->zona}})</td>
                                     <td>{{$as->tarea}}</td>
-                                    <td>{{$as->estado}}</td>
+                                    <td>
+                                        @if($dep->persona->tarea)
+                                          @if($dep->persona->tarea->estado == 'Ausente')
+                                          <h4><span class="badge badge-pill badge-danger">{{$dep->persona->tarea->estado}}</span></h4> 
+                                          @else
+                                          <h4><span class="badge badge-pill badge-primary">{{$dep->persona->tarea->estado}}</span></h4>
+                                          @endif
+                                        @endif
+                                    </td>
                                     <td>{{$as->observacion}}</td>
                                 </tr>
                                 @php($i++)   

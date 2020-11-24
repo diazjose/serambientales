@@ -79,33 +79,39 @@
                         <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Nombre</th>
                                     <th>Teléfono</th>
                                     <th>Lugar</th>
+                                    <th>Asistencia</th>
                                     <th>Tarea</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @php($i = 1)
                                 @foreach($dependiente as $dep)
                                 <tr>
                                     @if($dep->persona->habilitado != 'No')
-                                    <td>{{$i}}</td>
                                     <td>{{$dep->persona->apellidos}} {{$dep->persona->nombre}}</td>
                                     <td>{{$dep->persona->telefono}}</td>
                                     <td>
-                                        @if(isset($dep->persona->tarea)) 
-                                        {{$dep->persona->tarea->lugar->denominacion}}<br>
+                                        @if($dep->persona->tarea) 
+                                        {{$dep->persona->tarea->lugar->calle}} N° {{$dep->persona->tarea->lugar->numero}} B° {{$dep->persona->tarea->lugar->barrio->nombre}}<br>
                                         Tarea: {{$dep->persona->tarea->tarea}}<br>
-                                        Horario: {{date('H:i', strtotime($dep->persona->tarea->horaEntrada))}} a {{date('H:i', strtotime($dep->persona->tarea->horaSalida))}}
                                         @else
                                         NINGUNO...
                                         @endif
                                     </td>
                                     <td>
                                         @if($dep->persona->tarea)
-                                        <a href="#" class="btn btn-outline-success" onclick="editTarea({{$dep->persona->tarea->id}},{{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->lugar->id}}','{{$dep->persona->tarea->horaEntrada}}','{{$dep->persona->tarea->horaSalida}}','{{$dep->persona->tarea->tarea}}')" data-toggle="modal" data-target="#tareaModal" title="Editar Tarea" ><i class="far fa-edit"></i></a>
+                                          @if($dep->persona->tarea->estado == 'Ausente')
+                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-danger">{{$dep->persona->tarea->estado}}</span></h4></a>
+                                          @else
+                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-primary">{{$dep->persona->tarea->estado}}</span></h4></a>
+                                          @endif
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($dep->persona->tarea)
+                                        <a href="#" class="btn btn-outline-success" onclick="editTarea({{$dep->persona->tarea->id}},{{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->lugar->id}}','{{$dep->persona->tarea->tarea}}')" data-toggle="modal" data-target="#tareaModal" title="Editar Tarea" ><i class="far fa-edit"></i></a>
                                         <a href="#" class="btn btn-outline-danger" onclick="eliminarTarea({{$dep->persona->tarea->id}}, '{{$dep->persona->apellidos}} {{$dep->persona->nombre}}')" data-toggle="modal" data-target="#confirm"  title="Eliminar Tarea" ><i class="far fa-trash-alt"></i></a>
                                         @else
                                         <a href="#" class="btn btn-outline-primary" onclick="tarea({{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}')" data-toggle="modal" data-target="#tareaModal" title="Agregar Tarea" ><i class="fas fa-clipboard-list"></i></a>
@@ -115,7 +121,6 @@
                                     </td>
                                     @endif
                                 </tr>
-                                @php($i++)
                                 @endforeach
                             </tbody>
                         </table>
@@ -132,6 +137,65 @@
     </div>    
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="tareaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-rojo">
+        <h4 class="modal-title title text-white" id="Title"></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body bg-camel">
+            <form method="POST" action="" id="formTarea">
+                @csrf
+                <input type="hidden" name="idTarea" id="tarea_id">
+                <input type="hidden" name="id" value="{{$auth->id}}">
+                <input type="hidden" name="persona_id" id="persona_id" value="">
+                <div class="form-group">
+                    <label for="nombre" class="title">Asignar Tarea a:</label>
+                    <p id="nombre"></p>
+                </div>
+                <div class="form-group">
+                    <label for="lugar" class="title">Lugar</label>
+                    <select class="custom-select" id="lugar" name="lugar" required>
+                        <option selected disabled value="">-- Elegir Lugar --</option>
+                        @foreach($lugares as $lu)
+                        <option value="{{$lu->id}}">{{$lu->Calle}} N° {{$lu->numero}} {{$lu->barrio->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+               <!--
+                <div class="form-group">
+                    <label for="horaEntrada" class="title">{{ __('Hora de Entrada') }}</label>
+                    <input id="horaEntrada" type="time"  class="form-control @error('horaEntrada') is-invalid @enderror" name="horaEntrada" placeholder="00:00" autocomplete="horaEntrada" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="horaSalida" class="title">{{ __('Hora de Salida') }}</label>
+                    <input id="horaSalida" type="time" class="form-control @error('horaSalida') is-invalid @enderror" name="horaSalida" autocomplete="horaSalida" placeholder="00:00" autofocus>
+                </div>
+-->
+                <div class="form-group">
+                    <label for="tarea" class="title">Tarea Asignada</label>
+                    <select class="custom-select" id="tarea" name="tarea" required>
+                        <option selected disabled value="">-- Elegir Tarea --</option>
+                        <option value="Desmalezamiento">Desmalezamiento</option>
+                        <option value="Descacharreo">Descacharreo</option>
+                        <option value="Chofer">Chofer</option>
+                    </select>
+                </div>
+                
+                <hr>
+                <div class="form-group mx-2">
+                    <button type="submit" class="btn btn-primary title" id="boton"></button>
+                </div>
+            </form>        
+      </div>      
+    </div>
+  </div>
+</div>
 
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="confirmDelete">
@@ -190,7 +254,7 @@
         <h4 class="modal-title" id="myModalLabel">¿Desea eliminar la tarea de <strong>"<span id="nombreTarea"></span>"</strong>?</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
-      <form method="POST" action="{{route('personal.destroyTarea')}}">
+      <form method="POST" action="{{route('tarea.destroy')}}">
           @csrf
           <input type="hidden" name="id" value="{{$auth->id}}">
           <input type="hidden" name="idTarea" id="deleteTarea" value="">
@@ -203,6 +267,49 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="asistenciaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-rojo">
+        <h4 class="modal-title title text-white" id="Title">Registrar Asistencia</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body bg-camel">
+            <form method="POST" action="{{route('tarea.assistance')}}" id="formTarea">
+                @csrf
+                <input type="hidden" name="idTarea" id="idTarea">
+                <input type="hidden" name="id" value="{{$auth->id}}">
+                <input type="hidden" name="name" id="nameTarea" value="">
+                <div class="form-group">
+                    <label for="name" class="title">Asistencia de:</label>
+                    <p id="name"></p>
+                </div>
+                <div class="form-group">
+                    <label for="asis" class="title">Estado</label>
+                    <select class="custom-select" id="asis" name="estado" required>
+                        <option selected disabled value="">-- Elegir Opción --</option>
+                        <option value="Ausente">Ausente</option>
+                        <option value="Presente">Presente</option>
+                    </select>
+                </div>      
+                <div class="form-group">
+                    <label for="observacion" class="title">observación</label>
+                    <textarea name="" id="" cols="30" rows="3" class="form-control"></textarea>
+                </div>                    
+                
+                <hr>
+                <div class="form-group mx-2">
+                    <button type="submit" class="btn btn-primary title">Registrar Asistencia</button>
+                </div>
+            </form>        
+      </div>      
+    </div>
+  </div>
+</div>
+
 
 @endsection
 @section('script')

@@ -15,4 +15,8 @@ class Lugar extends Model
     public function barrio(){
     	return $this->belongsTo('App\Barrio','barrio_id');
     }
+
+    public function tareas(){
+    	return $this->hasMany('App\DesignarLugar'); 
+    }
 }

@@ -16,7 +16,7 @@
                                 @csrf
                                 <div class="form-group">
                                     <label for="calle" class="title">{{ __('Calle') }}</label>
-                                    <input id="calle" type="text" class="form-control @error('calle') is-invalid @enderror" name="calle" value="{{ old('calle') }}" required autocomplete="calle" autofocus>
+                                    <input id="calle" type="text" style="text-transform:uppercase;" class="form-control @error('calle') is-invalid @enderror" name="calle" value="{{ old('calle') }}" required autocomplete="calle" autofocus>
                                     @error('calle')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -44,7 +44,7 @@
                                    
                                 <div class="form-group">
                                     <label for="latitud" class="title">{{ __('latitud') }}</label>
-                                    <input id="latitud" type="text" class="form-control @error('latitud') is-invalid @enderror" name="latitud" value="{{ old('latitud') }}" autocomplete="latitud">
+                                    <input id="latitud" type="text" class="form-control @error('latitud') is-invalid @enderror" name="latitud" value="{{ old('latitud') }}" required autocomplete="latitud">
                                     @error('latitud')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="longitud" class="title">{{ __('Longitud') }}</label>
-                                    <input id="longitud" type="text" class="form-control @error('longitud') is-invalid @enderror" name="longitud" value="{{ old('longitud') }}" autocomplete="longitud">
+                                    <input id="longitud" type="text" class="form-control @error('longitud') is-invalid @enderror" name="longitud" value="{{ old('longitud') }}" required autocomplete="longitud">
                                     @error('longitud')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
