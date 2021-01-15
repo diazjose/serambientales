@@ -18,7 +18,7 @@ class DesignarLugarController extends Controller
     	$validate = $this->validate($request, [
                 'lugar_id' => ['required', 'string', 'max:255'],
 	            'fechaInicio' => ['required', 'date'],
-	            'tarea' => ['required', 'string', 'max:255'],
+	            'tarea' => ['required', 'integer', 'max:255'],
             ]);
 
         $desLug->lugar_id = $request->input('lugar_id');
@@ -26,7 +26,7 @@ class DesignarLugarController extends Controller
         if (!empty($request->input('fechaFin'))) {
             $desLug->fechaFin = $request->input('fechaFin');
         }       
-        $desLug->tarea = $request->input('tarea');
+        $desLug->tarea_id = $request->input('tarea');
         $desLug->estado = $request->input('estado');
 		$desLug->save();
         
@@ -41,14 +41,14 @@ class DesignarLugarController extends Controller
     	$validate = $this->validate($request, [
                 'lugar_id' => ['required', 'string', 'max:255'],
 	            'fechaInicio' => ['required', 'date'],
-	            'tarea' => ['required', 'string', 'max:255'],
+	            'tarea' => ['required', 'integer', 'max:255'],
             ]);
         $desLug = DesignarLugar::find($request->input('idTarea'));
         $desLug->fechaInicio = $request->input('fechaInicio');
         if (!empty($request->input('fechaFin'))) {
             $desLug->fechaFin = $request->input('fechaFin');
         }       
-        $desLug->tarea = $request->input('tarea');
+        $desLug->tarea_id = $request->input('tarea');
         $desLug->estado = $request->input('estado');
 		$desLug->update();
         

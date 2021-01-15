@@ -9,13 +9,24 @@
         </a>
     </div>
     <div class="item title">
-    	<i class="fas fa-fw fa-tools"></i> Herramientas
+        <a href="{{route('tarea.index')}}" class="btn-item">
+        <i class="fas fa-tasks"></i> Tareas
+        </a>    
     </div>
     <div class="item title">
-        <i class="fas fa-fw fa-tractor"></i> Maquinarias
+        <a href="{{route('herramienta.index')}}" class="btn-item">
+            <i class="fas fa-fw fa-tools"></i> Herramientas
+        </a>
     </div>
     <div class="item title">
-        <i class="fas fa-fw fa-th"></i> Insumos
+        <a href="{{route('maquinaria.index')}}" class="btn-item">
+            <i class="fas fa-fw fa-tractor"></i> Maquinarias
+        </a>
+    </div>
+    <div class="item title">
+        <a href="{{route('insumo.index')}}" class="btn-item">
+            <i class="fas fa-fw fa-th"></i> Insumos
+        </a>
     </div>
     <div class="item title">
         <a href="{{route('barrios.index')}}" class="btn-item">
@@ -28,6 +39,13 @@
         </a>    
     </div>
     <div class="item title">
-        <i class="fas fa-fw"><img src="{{asset('images/images.png')}}" width="22"></i> Denuncias
-    </div>    
+        <a href="{{route('denuncias.index')}}" class="btn-item">
+            <i class="fas fa-fw"><img src="{{asset('images/images.png')}}" width="22"></i> Denuncias
+        </a>
+    </div>  
+    <div class="item title">
+        <a href="{{route('denuncias.index')}}" class="btn-item">
+            <i class="fas fa-search-location"></i> Consultas
+        </a>
+    </div>  
 </div>

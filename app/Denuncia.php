@@ -9,11 +9,11 @@ class Denuncia extends Model
     protected $table = 'denuncias';
 
     protected $fillable = [
-        'designarLugar_id', 'denunciante', 'denuncia', 'estado', 'fecha',
+        'lugar_id', 'denunciante', 'estado', 'fecha', 'denuncia',
     ];
 
     public function lugar(){
-    	return $this->belongsTo('App\DesignarLugar', 'designarLugar_id'); 
+    	return $this->belongsTo('App\Lugar', 'lugar_id'); 
    }
 
 }

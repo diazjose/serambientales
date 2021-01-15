@@ -51,7 +51,7 @@
 
             <div class="row">
                 <div class="col-md-8">
-                    <h3 class="title my-3">Tareas Realizadas</h3>
+                    <h3 class="title text-rojo my-3">Tareas Realizadas</h3>
                 </div>
                 <div class="col-md-4 my-3"> 
                     <div class="form-group">
@@ -79,7 +79,7 @@
                             @foreach($lugar->tareas as $tarea)
                             <tr>
                                 <td>{{$i}}</td>
-                                <td>{{$tarea->tarea}}</td>
+                                <td>{{$tarea->tarea->nombre}}</td>
                                 <td>{{date('d/m/Y', strtotime($tarea->fechaInicio))}}</td>
                                 <td>
                                     @if($tarea->fechaFin != NULL)
@@ -94,7 +94,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                <a href="#" onclick="editTarea({{$tarea->id}},'{{$tarea->tarea}}','{{$tarea->fechaInicio}}','{{$tarea->fechaFin}}','{{$tarea->estado}}')" data-toggle="modal" data-target="#tareaModal" class="btn btn-outline-success title"  title="Asignar Tarea" ><i class="fas fa-edit"></i></a>
+                                <a href="#" onclick="editTarea({{$tarea->id}},'{{$tarea->tarea_id}}','{{$tarea->fechaInicio}}','{{$tarea->fechaFin}}','{{$tarea->estado}}')" data-toggle="modal" data-target="#tareaModal" class="btn btn-outline-success title"  title="Asignar Tarea" ><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                             @php($i++)
@@ -105,6 +105,68 @@
             @else
             <div class="text-center my-5">
                 <h4 class="text-danger my-5"><strong>NO SE REGISTRO NINGUN TAREA...</strong></h4>
+            </div>    
+            @endif
+            <hr>
+            <div class="row">
+                <div class="col-md-8">
+                    <h3 class="title text-rojo my-3">Denuncias Tomadas</h3>
+                </div>
+                <div class="col-md-4 my-3"> 
+                    <div class="form-group">
+                        <a href="#" onclick="denuncia()" data-toggle="modal" data-target="#denunciaModal" class="btn btn-outline-dark title"  title="Registrar Denuncia" >
+                            <i class="fas fa-fw"><img src="{{asset('images/denuncia.jpeg')}}" width="25"></i>   Registrar Denuncia
+                        </a>
+                    </div>
+                </div>
+            </div>  
+            <hr>
+            @if(count($lugar->denuncias) > 0)
+                <div class="table-responsive my-5 justify-content-center" id="resultado">
+                    <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Denuncia</th>
+                                <th>Denunciante</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($lugar->denuncias as $d)
+                            <tr>
+                                <td>{{date('d/m/Y', strtotime($d->fecha))}}</td>
+                                <td>{{$d->denuncia}}</td>
+                                <td>{{$d->denunciante}}</td>
+                                <td>
+                                    @if($d->estado == 'Atender')
+                                    <h4>
+                                        <span class="badge badge-pill badge-danger">
+                                            {{$d->estado}}
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </span>
+                                    </h4>
+                                    @else
+                                    <h4>
+                                        <span class="badge badge-pill badge-success">
+                                            {{$d->estado}} 
+                                            <i class="far fa-check-circle"></i>
+                                        </span>
+                                    </h4>
+                                    @endif
+                                </td>
+                                <td>
+                                <a href="#" onclick="editDenuncia({{$d->id}},'{{$d->denunciante}}','{{$d->denuncia}}','{{$d->estado}}')" data-toggle="modal" data-target="#denunciaModal" class="btn btn-outline-success title"  title="Asignar Tarea" ><i class="fas fa-edit"></i></a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+            <div class="text-center my-5">
+                <h4 class="text-danger my-5"><strong>NO SE REGISTRO NINGUN DENUNCIA...</strong></h4>
             </div>    
             @endif
         </div>
@@ -130,8 +192,9 @@
                     <label for="tarea" class="title">Tarea Asignada</label>
                     <select class="custom-select" id="tarea" name="tarea" required>
                         <option selected disabled value="">-- Elegir Tarea --</option>
-                        <option value="Desmalezamiento">Desmalezamiento</option>
-                        <option value="Descacharreo">Descacharreo</option>
+                        @foreach($tareas as $t)
+                        <option value="{{$t->id}}">{{$t->nombre}}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
@@ -154,6 +217,46 @@
                 <hr>
                 <div class="form-group mx-2">
                     <button type="submit" class="btn btn-primary title" id="boton"></button>
+                </div>
+            </form>        
+      </div>      
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="denunciaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-rojo">
+        <h4 class="modal-title title text-white" id="dTitle"></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body bg-camel">
+            <form method="POST" action="" id="formDenuncia">
+                @csrf
+                <input type="hidden" name="idDenuncia" id="idDenuncia">
+                <input type="hidden" name="lugar_id" value="{{$lugar->id}}">
+                <div class="form-group">
+                    <label for="denunciante" class="title">Denuncinate</label>
+                    <input type="text" name="denunciante" id="denunciante" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="denuncia" class="title">Denuncia</label>
+                    <textarea name="denuncia" id="denuncia" cols="30" rows="5" class="form-control"></textarea>
+                </div>
+                <div class="form-group" id="dstatus">
+                    <label for="destado" class="title">Estado</label>
+                    <select class="custom-select" id="destado" name="destado" >
+                        <option selected disabled value="">-- Elegir Opción --</option>
+                        <option value="Atender">Atender</option>
+                        <option value="Atendida">Atendida</option>
+                    </select>
+                </div>      
+                <hr>
+                <div class="form-group mx-2">
+                    <button type="submit" class="btn btn-primary title" id="dboton"></button>
                 </div>
             </form>        
       </div>      

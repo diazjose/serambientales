@@ -32,7 +32,7 @@ window.addEventListener("load", function(){
 	$("#fechaTarea").click(function(){
 		var fecha = $("#fecha").val();		
 		var	id = $("#personal_id").val();
-		var url = 'http://localhost/serambientales/public/personal/asistencia/'+id+'/'+fecha;
+		var url = '../../asistencia/'+id+'/'+fecha;
 		$(location).attr('href',url);
 	});
 
@@ -61,7 +61,7 @@ function tarea(id,apellidos,nombre){
 	$('#lugar').val('');	
 	$('#tarea').val("");
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/serambientales/public/tarea/asignarTarea');
+	$("#formTarea").attr("action",'../../tarea/asignarTarea');
 	$("#Title").append('Agregar Tarea');
 	$("#persona_id").val(id);
 	$("#nombre").html('');
@@ -78,7 +78,7 @@ function editTarea(idTarea,id,apellidos, nombre, lugar, tarea){
 	$("#boton").text('');
 	$("#persona_id").val('');
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/serambientales/public/tarea/editarTarea');
+	$("#formTarea").attr("action",'../../tarea/editarTarea');
 	$("#Title").append('Actualizar Tarea');
 	$("#nombre").html('');
 	$("#tarea_id").val(idTarea);

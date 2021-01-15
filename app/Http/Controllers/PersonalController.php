@@ -7,6 +7,8 @@ use App\Persona;
 use App\Dependiente;
 use App\Trabajo;
 use App\Lugar;
+use App\Tarea;
+use App\DesignarLugar;
 
 class PersonalController extends Controller
 {
@@ -147,9 +149,10 @@ class PersonalController extends Controller
     public function viewAuth($id){
         $auth = Persona::where('id',$id)->first();
         $personas = Dependiente::where('coordinador_id',$id)->get();
+        $tareas = Tarea::where('estado','Activo')->orderBy('nombre')->get();
         $fecha = date('d/m/d');
-        $lugares = Lugar::all();
-        return view('personal.viewAuth', ['auth' => $auth, 'dependiente' => $personas, 'lugares' => $lugares]);
+        $lugares = DesignarLugar::where('estado','Activo')->get();
+        return view('personal.viewAuth', ['auth' => $auth, 'dependiente' => $personas, 'lugares' => $lugares, 'tareas' => $tareas]);
     }    
 
     public function destroy(Request $request){
@@ -179,6 +182,19 @@ class PersonalController extends Controller
                                 ->get();
                                 $mes = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][date("n",strtotime($fecha)) - 1];
         return view('personal.asistencia',['asistencias' => $asistencias, 'auth' => $persona, 'mes' => $mes]);
+    }
+
+    public function search(Request $request){
+        $buscar = $request->input('buscar');
+        $persona = Persona::where('dni', $buscar)->get();
+
+        if (count($persona)>0) {
+            $data['status'] = 'success';
+            $data['persona'] = $persona;
+        }else{
+            $data['status'] = 'danger';
+        }
+        return response()->json($data); 
     }
 }
 
@@ -253,47 +269,141 @@ CONSTRAINT pk_lugares PRIMARY KEY(id),
 CONSTRAINT fk_lugares_barrio FOREIGN KEY(barrio_id) REFERENCES barrios(id)
 )ENGINE=InnoDB;
 
+create table tareas(
+id int(255) auto_increment not null,
+nombre varchar(100),
+estado varchar(50),
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_tareas PRIMARY KEY(id)
+)ENGINE=InnoDB;
 
 create table trabajo(
 id int(255) auto_increment not null,
 persona_id int(255),
 lugar_id int(255),
+tarea_id int(255),
 fecha date,
 horaEntrada time,
 horaSalida time,
-tarea varchar(255),
 observacion text,
 estado varchar(100),
 created_at datetime,
 updated_at datetime,
 CONSTRAINT pk_trabajo PRIMARY KEY(id),
 CONSTRAINT fk_trabajo_persona FOREIGN KEY(persona_id) REFERENCES personas(id),
-CONSTRAINT fk_trabajo_puesto FOREIGN KEY(lugar_id) REFERENCES lugares(id)
+CONSTRAINT fk_trabajo_puesto FOREIGN KEY(lugar_id) REFERENCES lugares(id),
+CONSTRAINT fk_trabajo_tarea FOREIGN KEY(tarea_id) REFERENCES tareas(id)
 )ENGINE=InnoDB;
 
 create table designar_lugar(
 id int(255) auto_increment not null,
 lugar_id int(255),
+tarea_id int(255),
 fechaInicio date,
 fechaFin date,
-tarea varchar(255),
 estado varchar(100),
 created_at datetime,
 updated_at datetime,
 CONSTRAINT pk_designar_lugar PRIMARY KEY(id),
-CONSTRAINT fk_designar_lugar_lugar FOREIGN KEY(lugar_id) REFERENCES lugares(id)
+CONSTRAINT fk_designar_lugar_lugar FOREIGN KEY(lugar_id) REFERENCES lugares(id),
+CONSTRAINT fk_designar_lugar_tarea FOREIGN KEY(tarea_id) REFERENCES tareas(id)
 )ENGINE=InnoDB;
 
 create table denuncias(
 id int(255) auto_increment not null,
-designarLugar_id int(255),
+lugar_id int(255),
 denunciante varchar(255),
 estado varchar(100),
 fecha date,
+denuncia text,
 created_at datetime,
 updated_at datetime,
 CONSTRAINT pk_denuncias PRIMARY KEY(id),
-CONSTRAINT fk_denuncias_designarLugar FOREIGN KEY(designarLugar_id) REFERENCES designar_lugar(id)
+CONSTRAINT fk_denuncias_lugar FOREIGN KEY(lugar_id) REFERENCES lugares(id)
 )ENGINE=InnoDB;
 
+create table herramientas(
+id int(255) auto_increment not null,
+nombre varchar(255),
+cantidad int(100),
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_herramientas PRIMARY KEY(id)
+)ENGINE=InnoDB;
+
+create table asignacion_herramienta(
+id int(255) auto_increment not null,
+herramienta_id int(255),
+persona_id int(255),
+cantidad int(255),
+fechaEntrega date,
+fechaDevolucion date,
+observacion text,
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_asignacion_herramiente PRIMARY KEY(id),
+CONSTRAINT fk_asignacion_herramienta_as FOREIGN KEY(herramienta_id) REFERENCES herramientas(id),
+CONSTRAINT fk_asignacion_herramienta_persona FOREIGN KEY(persona_id) REFERENCES personas(id)
+)ENGINE=InnoDB;
+
+create table insumos(
+id int(255) auto_increment not null,
+nombre varchar(255),
+cantidad int(100),
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_insumos PRIMARY KEY(id)
+)ENGINE=InnoDB;
+
+create table compra_insumo(
+id int(255) auto_increment not null,
+insumo_id int(255),
+cantidad int(255),
+monto varchar(255),
+fecha date,
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_compra_insumo PRIMARY KEY(id),
+CONSTRAINT fk_compra_insumo_as FOREIGN KEY(insumo_id) REFERENCES insumos(id)
+)ENGINE=InnoDB;
+
+create table entrega_insumo(
+id int(255) auto_increment not null,
+insumo_id int(255),
+persona_id int(255),
+cantidad int(255),
+fecha date,
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_entrega_insumo PRIMARY KEY(id),
+CONSTRAINT fk_entrega_insumo_as FOREIGN KEY(insumo_id) REFERENCES insumos(id),
+CONSTRAINT fk_entrega_insumo_persona FOREIGN KEY(persona_id) REFERENCES personas(id)
+)ENGINE=InnoDB;
+
+create table maquinarias(
+id int(255) auto_increment not null,
+nombre varchar(255),
+dominio varchar(255),
+estado varchar(20),
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_maquinarias PRIMARY KEY(id)
+)ENGINE=InnoDB;
+
+create table asignacion_maquinaria(
+id int(255) auto_increment not null,
+maquinaria_id int(255),
+persona_id int(255),
+fechaEntrega date,
+fechaDevolucion date,
+observacion text,
+created_at datetime,
+updated_at datetime,
+CONSTRAINT pk_asignacion_maquinaria PRIMARY KEY(id),
+CONSTRAINT fk_asignacion_maquinaria_as FOREIGN KEY(maquinaria_id) REFERENCES maquinarias(id),
+CONSTRAINT fk_asignacion_maquinaria_persona FOREIGN KEY(persona_id) REFERENCES personas(id)
+)ENGINE=InnoDB;
+
+INSERT INTO users VALUES (1, "Luz" ,"Herrera", "luzherrera33967@gmail.com", "$2y$10$PjnHPCT6q/OKaK27IQqIm.5viEyR2W9j46wHGQkNA/AE37JZm4tEu", "ADMIN","2020-11-23 00:00:00", "2020-11-23 00:00:00");
 */

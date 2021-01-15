@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Barrio;
 use App\Lugar;
+use App\Tarea;
 use Mapper;
 
 class LugaresController extends Controller
@@ -77,7 +78,8 @@ class LugaresController extends Controller
 
     public function view($id){
         $lugar = Lugar::find($id);
+        $tarea = Tarea::where('estado','Activo')->orderBy('nombre')->get();
         Mapper::map($lugar->latitud, $lugar->longitud, ['zoom' => 15, 'markers' => ['title' => $lugar->calle.' N° '.$lugar->numero.' B° '.$lugar->barrio->nombre, 'animation' => 'DROP']]);
-        return view('lugares.view',['lugar'=> $lugar, 'fecha' => date('Y-m-d'), 'personas' => []]);
+        return view('lugares.view',['lugar'=> $lugar, 'tareas' => $tarea, 'personas' => []]);
     }
 }

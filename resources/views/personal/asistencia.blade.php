@@ -91,7 +91,7 @@
                                     <td>{{$i}}</td>
                                     <td>{{date('d/m/Y', strtotime($as->fecha))}}</td>
                                     <td>{{$as->lugar->calle}} N° {{$as->lugar->numero}} - B° {{$as->lugar->barrio->nombre}} ({{$as->lugar->barrio->zona}})</td>
-                                    <td>{{$as->tarea}}</td>
+                                    <td>{{$as->tarea->nombre}}</td>
                                     <td>
                                         @if($dep->persona->tarea)
                                           @if($dep->persona->tarea->estado == 'Ausente')

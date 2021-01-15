@@ -7,7 +7,7 @@ function tarea(){
     $('#fechaFin').val('');	
 	$('#estado').val("");
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/serambientales/public/designarLugar/crear');
+	$("#formTarea").attr("action",'../../designarLugar/crear');
 	$("#Title").append('Agregar Tarea');
 	$("#boton").text('Agregar Tarea');
 	$("#boton").removeClass('btn-success');
@@ -24,7 +24,7 @@ function editTarea(idTarea,tarea,inicio,fin,estado){
     $('#fechaFin').val('');	
 	$('#estado').val("");
 	$("#formTarea").attr("action",'');
-	$("#formTarea").attr("action",'http://localhost/serambientales/public/designarLugar/editar');
+	$("#formTarea").attr("action",'../../designarLugar/editar');
 	$("#Title").append('Editar Tarea');
 	$("#idTarea").val(idTarea);
     $('#tarea option[value="'+ tarea +'"]').attr("selected",true);	
@@ -34,4 +34,39 @@ function editTarea(idTarea,tarea,inicio,fin,estado){
 	$("#boton").text('Actializar Tarea');
 	$("#boton").removeClass('btn-primary');
 	$("#boton").addClass('btn-success');	
+}
+
+function denuncia(){
+	$("#dTitle").html('');
+	$("#dboton").text('');
+	$("#idDenuncia").val('');
+    $('#denunciante').val('');
+	$('#denuncia').val('');
+	$("#dstatus").hide();
+    $("#formDenuncia").attr("action",'');
+	$("#formDenuncia").attr("action",'../../denuncia/registrar');
+	$("#dTitle").append('Registrar Denuncia');
+	$("#dboton").text('Registrar Denuncia');
+	$("#dboton").removeClass('btn-success');
+	$("#dboton").addClass('btn-primary');
+	
+}
+
+function editDenuncia(idDenuncia,denunciante,denuncia,estado){
+	$("#dTitle").html('');
+	$("#dboton").text('');
+	$("#idDenuncia").val('');
+    $('#denunciante').val('');
+    $('#denuncia').val('');
+    $("#formDenuncia").attr("action",'');
+	$("#formDenuncia").attr("action",'../../denuncia/update');
+	$("#dTitle").append('Editar Denuncia');
+	$("#idDenuncia").val(idDenuncia);
+	$("#dstatus").show();
+    $('#destado option[value="'+ estado +'"]').attr("selected",true);
+    $('#denunciante').val(denunciante);
+    $('#denuncia').val(denuncia);
+	$("#dboton").text('Actializar Denuncia');
+	$("#dboton").removeClass('btn-primary');
+	$("#dboton").addClass('btn-success');	
 }

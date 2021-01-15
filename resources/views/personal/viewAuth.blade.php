@@ -95,7 +95,7 @@
                                     <td>
                                         @if($dep->persona->tarea) 
                                         {{$dep->persona->tarea->lugar->calle}} N° {{$dep->persona->tarea->lugar->numero}} B° {{$dep->persona->tarea->lugar->barrio->nombre}}<br>
-                                        Tarea: {{$dep->persona->tarea->tarea}}<br>
+                                        Tarea: {{$dep->persona->tarea->tarea->nombre}}<br>
                                         @else
                                         NINGUNO...
                                         @endif
@@ -103,15 +103,15 @@
                                     <td>
                                         @if($dep->persona->tarea)
                                           @if($dep->persona->tarea->estado == 'Ausente')
-                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-danger">{{$dep->persona->tarea->estado}}</span></h4></a>
+                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-danger">{{$dep->persona->tarea->estado}} <i class="far fa-times-circle"></i></span></h4></a>
                                           @else
-                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-primary">{{$dep->persona->tarea->estado}}</span></h4></a>
+                                          <a href="#" onclick="asistencia({{$dep->persona->tarea->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->estado}}','{{$dep->persona->tarea->observacion}}')" data-toggle="modal" data-target="#asistenciaModal"><h4><span class="badge badge-pill badge-primary">{{$dep->persona->tarea->estado}} <i class="far fa-check-circle"></i></span></h4></a>
                                           @endif
                                         @endif
                                     </td>
                                     <td>
                                         @if($dep->persona->tarea)
-                                        <a href="#" class="btn btn-outline-success" onclick="editTarea({{$dep->persona->tarea->id}},{{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->lugar->id}}','{{$dep->persona->tarea->tarea}}')" data-toggle="modal" data-target="#tareaModal" title="Editar Tarea" ><i class="far fa-edit"></i></a>
+                                        <a href="#" class="btn btn-outline-success" onclick="editTarea({{$dep->persona->tarea->id}},{{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}','{{$dep->persona->tarea->lugar->id}}','{{$dep->persona->tarea->tarea_id}}')" data-toggle="modal" data-target="#tareaModal" title="Editar Tarea" ><i class="far fa-edit"></i></a>
                                         <a href="#" class="btn btn-outline-danger" onclick="eliminarTarea({{$dep->persona->tarea->id}}, '{{$dep->persona->apellidos}} {{$dep->persona->nombre}}')" data-toggle="modal" data-target="#confirm"  title="Eliminar Tarea" ><i class="far fa-trash-alt"></i></a>
                                         @else
                                         <a href="#" class="btn btn-outline-primary" onclick="tarea({{$dep->persona->id}},'{{$dep->persona->apellidos}}','{{$dep->persona->nombre}}')" data-toggle="modal" data-target="#tareaModal" title="Agregar Tarea" ><i class="fas fa-clipboard-list"></i></a>
@@ -163,7 +163,7 @@
                     <select class="custom-select" id="lugar" name="lugar" required>
                         <option selected disabled value="">-- Elegir Lugar --</option>
                         @foreach($lugares as $lu)
-                        <option value="{{$lu->id}}">{{$lu->Calle}} N° {{$lu->numero}} {{$lu->barrio->nombre}}</option>
+                        <option value="{{$lu->lugar_id}}">{{$lu->lugar->calle}} N° {{$lu->lugar->numero}} {{$lu->lugar->barrio->nombre}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -181,9 +181,9 @@
                     <label for="tarea" class="title">Tarea Asignada</label>
                     <select class="custom-select" id="tarea" name="tarea" required>
                         <option selected disabled value="">-- Elegir Tarea --</option>
-                        <option value="Desmalezamiento">Desmalezamiento</option>
-                        <option value="Descacharreo">Descacharreo</option>
-                        <option value="Chofer">Chofer</option>
+                        @foreach($tareas as $t)
+                        <option value="{{$t->id}}">{{$t->nombre}}</option>
+                        @endforeach
                     </select>
                 </div>
                 

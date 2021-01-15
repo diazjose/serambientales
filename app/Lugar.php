@@ -19,4 +19,8 @@ class Lugar extends Model
     public function tareas(){
     	return $this->hasMany('App\DesignarLugar'); 
     }
+
+    public function denuncias(){
+    	return $this->hasMany('App\Denuncia')->orderBy('fecha','DESC'); 
+    }
 }
