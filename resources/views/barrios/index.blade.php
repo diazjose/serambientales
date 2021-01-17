@@ -36,7 +36,9 @@
                                 <td>{{$ba->zona}}</td>
                                 <td>
                                     <a href="#" onclick="editBarrio({{$ba->id}},'{{$ba->nombre}}','{{$ba->zona}}')" class="btn btn-outline-success" data-toggle="modal" data-target="#barrioModal" title="Editar Barrio" ><i class="fas fa-edit"></i></a>
+                                    @if(count($ba->lugares)>0)
                                     <a href="#" onclick="deleteBarrio({{$ba->id}},'{{$ba->nombre}}')" data-toggle="modal" data-target="#confirm" class="btn btn-outline-danger" title="Eliminar Barrio" ><i class="fas fa-trash-alt"></i></a>
+                                    @endif                                    
                                 </td>
                             </tr>
                             @php($i++)

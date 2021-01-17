@@ -44,7 +44,7 @@
         </a>
     </div>  
     <div class="item title">
-        <a href="{{route('denuncias.index')}}" class="btn-item">
+        <a href="{{route('consulta.index')}}" class="btn-item">
             <i class="fas fa-search-location"></i> Consultas
         </a>
     </div>  

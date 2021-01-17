@@ -14,16 +14,30 @@ class DenunciasController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(){
-    	$denuncias = Denuncia::where('estado','Atender')->get();
+    public function index(Request $request){
+        if($request->input()){
+            $estado = $request->input('status');
+            if($estado!='TODAS'){
+                $denuncias = Denuncia::where('estado',$estado)->get();
+            }else{
+                $denuncias = Denuncia::all();
+            }
+            
+        }else{
+            $denuncias = NULL;
+            $estado = '';
+        }
         Mapper::map(-29.432468, -66.864249, ['zoom' => 13, 'markers' => ['title' => 'Base Operativa', 'animation' => 'DROP']]);
         //Recorremos los registros para generar las marcas
-        foreach ($denuncias as $d) {
-            if ($d->lugar->latitud != null) {
-                Mapper::marker($d->lugar->latitud, $d->lugar->longitud,['title' => $d->lugar->calle." N° ".$d->lugar->numero." B° ".$d->lugar->barrio->nombre]);
+        if($denuncias!=NULL){
+            foreach ($denuncias as $d) {
+                if ($d->lugar->latitud != null) {
+                    Mapper::marker($d->lugar->latitud, $d->lugar->longitud,['title' => $d->lugar->calle." N° ".$d->lugar->numero." B° ".$d->lugar->barrio->nombre]);
+                }
             }
         }
-        return view('denuncias.index',['denuncias' => $denuncias]);
+        
+        return view('denuncias.index',['denuncias' => $denuncias, 'title' => $estado]);
     }
 
     public function register(){

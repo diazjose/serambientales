@@ -94,3 +94,7 @@ Route::get('/maquinaria/ver/{id}', 'MaquinariasController@view')->name('maquinar
 Route::post('/maquinaria/prestar', 'AsignarMaquinariasController@create')->name('maquinaria.prestar');
 Route::post('/maquinaria/prestarEdit', 'AsignarMaquinariasController@update')->name('maquinaria.prestarEdit');
 Route::post('/maquinaria/prestarDelete', 'AsignarMaquinariasController@destroy')->name('maquinaria.prestarDelete');
+
+/* CONSULTAS */
+Route::get('/consultas', 'ConsultasController@index')->name('consulta.index');
+Route::get('/consulta/ver', 'ConsultasController@view')->name('consulta.view');
