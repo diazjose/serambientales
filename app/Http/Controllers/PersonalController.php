@@ -37,8 +37,8 @@ class PersonalController extends Controller
 	            'dni' => ['required', 'string', 'max:255', 'unique:personas'],
 	            //'fechaNac' => ['required', 'date', 'max:255'],
 	            //'email' => ['required', 'email', 'unique:personas'],
-	            'direccion' => ['required', 'string', 'max:255'],
-                'telefono' => ['required', 'string', 'max:255'],
+	            //'direccion' => ['required', 'string', 'max:255'],
+                //'telefono' => ['required', 'string', 'max:255'],
 	            'cargo' => ['required', 'string', 'max:50'],
             ],
             [
@@ -52,13 +52,16 @@ class PersonalController extends Controller
 		if (!empty($request->input('fechaNac'))) {
             $persona->fechaNac = $request->input('fechaNac');
         }
-        if (!empty($request->input('fechaNac'))) {
+        if (!empty($request->input('email'))) {
             $persona->email = $request->input('email');
         }
-        //$persona->email = $request->input('email');
-    	$persona->direccion = strtoupper($request->input('direccion'));
-    	//$persona->zona = strtoupper($request->input('zona'));
-        $persona->telefono = $request->input('telefono');
+        if (!empty($request->input('direccion'))) {
+            $persona->email = $request->input('direccion');
+        }
+        if (!empty($request->input('telefono'))) {
+            $persona->email = $request->input('telefono');
+        }
+        
 		$persona->cargo = strtoupper($request->input('cargo'));
     	$persona->habilitado = 'Si';
 		$persona->save();
@@ -85,10 +88,10 @@ class PersonalController extends Controller
                 'nombre' => ['required', 'string', 'max:255'],
                 'apellidos' => ['required', 'string', 'max:255'],
                 'dni' => ['required', 'string', 'max:8', 'unique:personas,dni,'.$id],
-                'fechaNac' => ['required', 'date', 'max:255'],
-                'email' => ['required', 'email', 'unique:personas,email,'.$id],
-                'direccion' => ['required', 'string', 'max:255'],
-                'telefono' => ['required', 'string', 'max:255'],
+                //'fechaNac' => ['required', 'date', 'max:255'],
+                //'email' => ['required', 'email', 'unique:personas,email,'.$id],
+                //'direccion' => ['required', 'string', 'max:255'],
+                //'telefono' => ['required', 'string', 'max:255'],
                 'cargo' => ['required', 'string', 'max:50'],
             ],
             [
@@ -99,10 +102,18 @@ class PersonalController extends Controller
         $persona->nombre = strtoupper($request->input('nombre'));
         $persona->apellidos = strtoupper($request->input('apellidos'));
         $persona->dni = $request->input('dni');
-        $persona->fechaNac = $request->input('fechaNac');
-        $persona->email = $request->input('email');
-        $persona->direccion = strtoupper($request->input('direccion'));
-        $persona->telefono = $request->input('telefono');
+        if (!empty($request->input('fechaNac'))) {
+            $persona->fechaNac = $request->input('fechaNac');
+        }
+        if (!empty($request->input('email'))) {
+            $persona->email = $request->input('email');
+        }
+        if (!empty($request->input('direccion'))) {
+            $persona->email = $request->input('direccion');
+        }
+        if (!empty($request->input('telefono'))) {
+            $persona->email = $request->input('telefono');
+        }
         $persona->cargo = strtoupper($request->input('cargo'));
         
         $persona->update();

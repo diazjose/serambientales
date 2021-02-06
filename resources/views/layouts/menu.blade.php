@@ -48,4 +48,9 @@
             <i class="fas fa-search-location"></i> Consultas
         </a>
     </div>  
+    <div class="item title">
+        <a href="{{ asset('Manual/MANUAL DE USUARIO - SerAmbientales.pdf')}}" target="_balck" class="btn-item">
+        <i class="fas fa-book-open"></i>Manual de Usuario
+        </a>
+    </div>  
 </div>
